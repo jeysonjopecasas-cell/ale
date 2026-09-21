@@ -44,7 +44,7 @@
       overflow: hidden;
     }
 
-    /* Aura nocturna sutil original (fondo oscuro) */
+    /* Fondo nocturno limpio con aura sutil */
     body::before {
       content: "";
       position: fixed;
@@ -77,43 +77,57 @@
       z-index: 5;
     }
 
-    /* Texto 1: Escritura hacker roja idéntica al ejemplo */
+    /* Contenedor del texto mecanografiado */
     .aura-text {
       position: fixed;
-      top: 5%;
+      top: 3.5%;
       left: 50%;
       transform: translateX(-50%);
       font-family: 'Courier New', monospace;
-      font-weight: bold;
+      font-weight: 800;
       text-align: center;
       opacity: 0;
-      z-index: 20;
+      z-index: 25;
       pointer-events: none;
-      width: 90%;
+      width: 92%;
       max-width: 900px;
       padding: 0 15px;
       box-sizing: border-box;
-      line-height: 1.5;
-      white-space: pre-wrap;
+      line-height: 1.6;
     }
 
-    .aura-text span {
+    /* Cada palabra se mantiene junta (evita partir "decirte" o "vida") */
+    .aura-word {
       display: inline-block;
-      color: #ff2a2a;
-      text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000, 0 0 35px #cc0000;
-      font-size: 23px;
-      opacity: 0;
-      transform: translateY(12px);
+      white-space: nowrap;
+      margin-right: 7px;
     }
 
-    /* Cursor parpadeante rojo */
+    /* Estilo de las letras: Núcleo blanco/rosa con contorno y resplandor rojo */
+    .aura-char {
+      display: inline-block;
+      color: #fff2f2;
+      -webkit-text-stroke: 0.8px #200003;
+      text-shadow: 
+        0 0 5px #ff0033,
+        0 0 12px #ff0033,
+        0 0 25px #d40029,
+        0 0 45px #800018;
+      font-size: 21px;
+      letter-spacing: 0.5px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.15s ease, transform 0.15s ease;
+    }
+
+    /* Cursor parpadeante */
     .cursor {
       display: inline-block;
-      width: 8px;
+      width: 9px;
       height: 24px;
-      background-color: #ff2a2a;
-      box-shadow: 0 0 8px #ff0000;
-      margin-left: 4px;
+      background-color: #ff1a40;
+      box-shadow: 0 0 10px #ff0033;
+      margin-left: 3px;
       animation: blink 0.7s infinite;
       vertical-align: middle;
     }
@@ -123,44 +137,55 @@
       50% { opacity: 0; }
     }
 
-    /* Texto 2: Mensaje final con pulso rojo neón del ejemplo */
+    /* Mensaje final con pulso neón y máxima nitidez */
     .final-message {
       position: fixed;
-      top: 5%;
+      top: 3.5%;
       left: 50%;
       transform: translateX(-50%);
       font-family: 'Courier New', monospace;
-      font-weight: bold;
+      font-weight: 800;
       text-align: center;
       opacity: 0;
       z-index: 30;
       pointer-events: none;
-      font-size: 22px;
-      line-height: 1.6;
+      font-size: 21px;
+      line-height: 1.7;
       white-space: pre-line;
       max-width: 850px;
-      width: 90%;
+      width: 92%;
       padding: 0 15px;
       box-sizing: border-box;
-      transition: opacity 1s ease-in-out;
-      color: #ff1a1a;
-      text-shadow: 0 0 20px #ff0000, 0 0 40px #ff0000, 0 0 80px #ff0000;
+      transition: opacity 1.5s ease-in-out;
+      color: #fff2f2;
+      -webkit-text-stroke: 0.8px #200003;
+      text-shadow: 
+        0 0 8px #ff0033,
+        0 0 20px #ff0033,
+        0 0 45px #cc0029;
     }
 
     .final-message.active {
-      animation: text-pulse 0.6s infinite alternate;
+      animation: text-pulse 0.7s infinite alternate;
     }
 
     @keyframes text-pulse {
       from {
-        text-shadow: 0 0 20px #ff0000, 0 0 40px #ff0000, 0 0 60px #ff0000;
+        text-shadow: 
+          0 0 6px #ff0033,
+          0 0 15px #ff0033,
+          0 0 30px #b30024;
       }
       to {
-        text-shadow: 0 0 30px #ff3333, 0 0 60px #ff3333, 0 0 90px #ff0000, 0 0 110px #ff0000;
+        text-shadow: 
+          0 0 10px #ff2b52,
+          0 0 25px #ff0033,
+          0 0 50px #ff0033,
+          0 0 75px #99001f;
       }
     }
 
-    /* Tallos verdes limpios */
+    /* Tallos verdes */
     .flower__line {
       background-color: #107b17 !important;
       box-shadow: 0 0 5px #107b17, 0 0 10px #107b17 !important;
@@ -176,7 +201,7 @@
   <div class="night"></div>
   <div class="particles" id="particles"></div>
 
-  <!-- Estructura de flores -->
+  <!-- Flores amarillas -->
   <div class="flowers">
     <div class="flower flower--1">
       <div class="flower__leafs flower__leafs--1">
@@ -360,20 +385,17 @@
 
   <script>
     window.addEventListener("load", () => {
-      // Inicia animación de apertura
       document.body.classList.remove("container");
 
       const backgroundMusic = document.getElementById("background-music");
       backgroundMusic.play().catch(() => {});
 
-      // Inicia música al primer clic
       document.body.addEventListener("click", () => {
         backgroundMusic.play();
       }, { once: true });
 
-      // Partículas y texto
       setTimeout(startParticles, 2500);
-      setTimeout(startEffectsSequence, 5000);
+      setTimeout(startTypingSequence, 4500);
     });
 
     let PARTICLE_INTENSITY = 45;
@@ -406,15 +428,12 @@
       }, duration * 1000);
     }
 
-    function startEffectsSequence() {
-      // Muestra el texto directamente sobre el fondo oscuro limpio
-      showHackerText();
-    }
+    function startTypingSequence() {
+      // Texto 1 con salto de línea antes de "Gracias por ser tú"
+      const text1 = "💋 Ale 🩺: Amor, te adoro. Hay miles de cosas que desearía decirte, pero lo más importante es que quiero que sepas que te quiero y no hay nadie en esta vida con quien desearía compartir mi vida.\n\nGracias por ser tú ❤️";
 
-    function showHackerText() {
-      const typingMessage = "💋 Ale 🩺\n\nAmor, te adoro. Hay miles de cosas que desearía decirte, pero lo más importante es que quiero que sepas que te quiero y no hay nadie en esta vida con quien desearía compartir mi vida. Gracias por ser tú ❤️";
-
-      const finalMsgText = "💋 Ale 🩺\n\nAmor, sé que no es lo que esperas, pero no tener tiempo para coordinar una entrega no significa que no haga nada.\n\n¡TE QUIERO AMOR, MUCHO! ❤️";
+      // Texto 2 final
+      const text2 = "💋 Ale 🩺\n\nAmor, sé que no es lo que esperas, pero no tener tiempo para coordinar una entrega no significa que no haga nada.\n\n¡TE QUIERO AMOR, MUCHO! ❤️";
 
       const auraText = document.getElementById('aura-text');
       const finalMessage = document.getElementById('final-message');
@@ -424,37 +443,87 @@
       cursor.className = 'cursor';
       auraText.appendChild(cursor);
 
-      // Usar Array.from protege los emojis para que no se corrompan
-      const characters = Array.from(typingMessage);
-      let currentIndex = 0;
+      // Separamos por líneas para respetar los saltos
+      const lines = text1.split('\n');
+      let lineIndex = 0;
+      let wordIndex = 0;
+      let charIndex = 0;
+      let currentWordSpan = null;
+      let currentWords = lines[0].split(' ').filter(w => w.length > 0);
 
-      function showNextCharacter() {
-        if (currentIndex < characters.length) {
-          const char = characters[currentIndex];
-          const span = document.createElement('span');
-          
-          // Mantiene los espacios intactos entre palabras
-          span.innerHTML = char === ' ' ? '&nbsp;' : char;
-          
-          auraText.insertBefore(span, cursor);
-          setTimeout(() => { span.style.opacity = '1'; }, 20);
-          currentIndex++;
-          setTimeout(showNextCharacter, 75);
+      function typeNext() {
+        if (lineIndex < lines.length) {
+          // Si es una línea vacía (un salto doble)
+          if (lines[lineIndex] === '') {
+            auraText.insertBefore(document.createElement('br'), cursor);
+            lineIndex++;
+            if (lineIndex < lines.length) {
+              currentWords = lines[lineIndex].split(' ').filter(w => w.length > 0);
+              wordIndex = 0;
+              charIndex = 0;
+            }
+            setTimeout(typeNext, 200);
+            return;
+          }
+
+          if (wordIndex < currentWords.length) {
+            const word = currentWords[wordIndex];
+            const wordChars = Array.from(word);
+
+            // Crear contenedor de la palabra para que nunca se divida
+            if (charIndex === 0) {
+              currentWordSpan = document.createElement('span');
+              currentWordSpan.className = 'aura-word';
+              auraText.insertBefore(currentWordSpan, cursor);
+            }
+
+            // Escribir letra
+            const charSpan = document.createElement('span');
+            charSpan.className = 'aura-char';
+            charSpan.textContent = wordChars[charIndex];
+            currentWordSpan.appendChild(charSpan);
+
+            setTimeout(() => {
+              charSpan.style.opacity = '1';
+              charSpan.style.transform = 'translateY(0)';
+            }, 10);
+
+            charIndex++;
+            if (charIndex >= wordChars.length) {
+              // Fin de la palabra
+              wordIndex++;
+              charIndex = 0;
+            }
+            setTimeout(typeNext, 70);
+          } else {
+            // Fin de la línea
+            lineIndex++;
+            if (lineIndex < lines.length) {
+              auraText.insertBefore(document.createElement('br'), cursor);
+              currentWords = lines[lineIndex].split(' ').filter(w => w.length > 0);
+              wordIndex = 0;
+              charIndex = 0;
+            }
+            setTimeout(typeNext, 150);
+          }
         } else {
+          // Finalizó de escribirse todo el primer texto
           cursor.remove();
-          // Espera 3.5 segundos y cambia al mensaje con pulso neón
+          
+          // PAUSA DE 8 SEGUNDOS: Tiempo completo y tranquilo para leer
           setTimeout(() => {
-            auraText.style.transition = 'opacity 1s ease-out';
+            auraText.style.transition = 'opacity 1.5s ease-out';
             auraText.style.opacity = '0';
             setTimeout(() => {
-              finalMessage.textContent = finalMsgText;
+              finalMessage.textContent = text2;
               finalMessage.style.opacity = '1';
               finalMessage.classList.add('active');
-            }, 1000);
-          }, 3500);
+            }, 1200);
+          }, 8000);
         }
       }
-      showNextCharacter();
+
+      typeNext();
     }
   </script>
 </body>
