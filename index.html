@@ -424,32 +424,40 @@
     }
 
     function showHackerText() {
-      // 1. Mensaje que se escribe letra por letra
-      const typingMessage = "💋Ale🩺: Amor te adoro, hay miles de cosas que desearía decirte pero lo más importante es que quiero sepas que te quiero y no hay nadie en esta vida con quien desearía compartir mi vida, gracias por ser tú.";
+      // Mensaje con espacios y formato ordenado
+      const typingMessage = "💋 Ale 🩺: Amor, te adoro. Hay miles de cosas que desearía decirte, pero lo más importante es que quiero que sepas que te quiero y no hay nadie en esta vida con quien desearía compartir mi vida. Gracias por ser tú.";
 
-      // 2. Mensaje final fijo
-      const finalMsgText = "💋Ale🩺\n\nAmor sé que no es lo que esperas, pero no tener tiempo para coordinar una entrega no significa que no haga nada.\n\n¡TE QUIERO AMOR MUCHO! ❤️";
+      const finalMsgText = "💋 Ale 🩺\n\nAmor, sé que no es lo que esperas, pero no tener tiempo para coordinar una entrega no significa que no haga nada.\n\n¡TE QUIERO AMOR, MUCHO! ❤️";
 
       const auraText = document.getElementById('aura-text');
       const finalMessage = document.getElementById('final-message');
       
+      // Permitir que los espacios se respeten visualmente
+      auraText.style.whiteSpace = 'pre-wrap';
       auraText.style.opacity = '1';
+
       const cursor = document.createElement('span');
       cursor.className = 'cursor';
       auraText.appendChild(cursor);
 
+      // Array.from evita romper los emojis complejos
+      const characters = Array.from(typingMessage);
       let currentIndex = 0;
+
       function showNextCharacter() {
-        if (currentIndex < typingMessage.length) {
+        if (currentIndex < characters.length) {
+          const char = characters[currentIndex];
           const span = document.createElement('span');
-          span.textContent = typingMessage[currentIndex];
+          
+          // Si es espacio, se coloca un espacio no separable (&nbsp;) para que no se pegue
+          span.innerHTML = char === ' ' ? '&nbsp;' : char;
+          
           auraText.insertBefore(span, cursor);
           setTimeout(() => { span.style.opacity = '1'; }, 20);
           currentIndex++;
-          setTimeout(showNextCharacter, 80);
+          setTimeout(showNextCharacter, 75);
         } else {
           cursor.remove();
-          // Espera 3.5 segundos leyendo el primer mensaje y luego muestra el final
           setTimeout(() => {
             auraText.style.transition = 'opacity 1s ease-out';
             auraText.style.opacity = '0';
